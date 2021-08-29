@@ -1,4 +1,5 @@
 import os
+import sys
 import warnings
 import logging
 import time
@@ -7,36 +8,37 @@ import pandas as pd
 import torch.optim
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from ffnn_dataset import FFNN_dataset
+from dataset import FFNN_dataset
 from model import FFNN
-from utils import get_accuracy
+sys.path.append('../')
+from utils.gen_utils import create_dir, get_accuracy
 
 warnings.filterwarnings('ignore', category=UserWarning)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-epochs = 100
-batch_size = 64
-lr = 0.001
+root_dir = str(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+epochs = 70
+batch_size = 32
+lr = 0.005
 workers = 4
 
 def main():
+
     # create new directory for the current training session
     today = date.today()
     today = str(today.strftime('%m-%d-%Y'))
-    dir_ = os.path.join(os.getcwd(), 'saved_models/FFNN/train-' + today)
+    dir_ = str(root_dir + '/saved_models/FFNN/train-' + today)
 
-    if os.path.isdir(dir_):
-        print(dir_, 'already exists. Continuing with training...' )
-    else:
-        print('Creating new dir: ', dir_)
-        os.makedirs(dir_)
+    create_dir(dir_)
 
     log_file_name = 'FFNN-' + today +'.log'
     logging.basicConfig(filename=os.path.join(dir_, log_file_name),
                         filemode='w',
                         format='%(asctime)s: %(message)s',
                         level=logging.INFO)
+
     # get training set
-    df = pd.read_csv('data/annotations/train.csv', header=None)
+    data_path = str(root_dir + '/data/annotations/train.csv')
+    df = pd.read_csv(data_path, header=None)
     
     # encode labels
     encode = {'voice' : 1, 'not_voice' : 0}
@@ -57,13 +59,12 @@ def main():
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=0.1)
 
     # for each epoch
     for epoch in range(epochs):
 
         model.train()
-        start = time.time()
         epoch_loss = 0
         epoch_accuracy = 0
         epoch_steps = 0
@@ -73,7 +74,7 @@ def main():
             x, y = x.to(device), y.to(device, dtype=torch.int64)
             optimizer.zero_grad()
             prediction = model(x)
-            loss = criterion(prediction, y) #y.float()
+            loss = criterion(prediction, y)
             epoch_accuracy = get_accuracy(prediction, y)
             
             loss.backward()
@@ -81,7 +82,6 @@ def main():
             
             epoch_loss += loss.item()
             epoch_steps += 1
-            start = time.time()
 
         # print status onto terminal and log file
         print('Epoch: [%d/%d] | Loss: %.3f | Accuracy: %.3f' % (epoch+1,
