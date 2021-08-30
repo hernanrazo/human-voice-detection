@@ -4,7 +4,7 @@ import argparse
 import warnings
 import pandas as pd
 import torch
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from model import FFNN
 from dataset import FFNN_dataset
 
@@ -60,7 +60,10 @@ def main():
             pred_list = torch.cat([pred_list, preds.view(-1).cpu()])
             ground_truth = torch.cat([ground_truth, y.view(-1).cpu()])
 
-    
+    # accuracy report
+    print('\nAccuracy Score:')
+    print(accuracy_score(ground_truth.numpy(), pred_list.numpy()))
+
     # confusion matrix
     print('\nConfusion Matrix:')
     conf_mat = confusion_matrix(ground_truth.numpy(), pred_list.numpy())

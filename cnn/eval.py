@@ -1,7 +1,7 @@
 import os
 import argparse
 import warnings
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import torch
 import torchvision
 from torchvision.transforms import transforms
@@ -51,7 +51,9 @@ def main():
             pred_list = torch.cat([pred_list, preds.view(-1).cpu()])
             ground_truth = torch.cat([ground_truth, y.view(-1).cpu()])
 
-
+    # accuracy score
+    print('\nAccuracy Score:')
+    print(accuracy_score(ground_truth.numpy(), pred_list.numpy()))
     # confusion matrix
     print('\nConfusion Matrix:')
     conf_mat = confusion_matrix(ground_truth.numpy(), pred_list.numpy())

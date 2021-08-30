@@ -46,8 +46,8 @@ def main():
     create_dir('temp')
     
     # get transforms and spectrogram image
-    transforms = apply_transforms('data/voice/wav/7447-91187-0034.wav')
-    melss = get_melss('data/voice/wav/7447-91187-0034.wav', 'temp/test.jpg')
+    transforms = apply_transforms('data/test/voice3.wav')
+    melss = get_melss('data/test/voice3.wav', 'temp/test.jpg')
 
     # convert transforms dict to tensor and 
     # apply transforms to melss image
@@ -74,7 +74,7 @@ def main():
 
     # delete temp dir after completion
     if os.path.isdir(root_dir + '/voice_detect/temp'):
-        print('\ndeleting temp dir ...\n')
+        print('deleting temp dir ...\n')
         os.remove(root_dir + '/voice_detect/temp/test.jpg')
         shutil.rmtree(root_dir + '/voice_detect/temp')
     else:
