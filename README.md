@@ -32,7 +32,9 @@ Each individual value gets its own cell and the label (voice/not_voice) gets att
 
 The convolutional neural network recieves an image of the recording's Mels-spectrogram as input. Each image is obtained using the Librosa library. The `prep_cnn_data.sh` shell script can be used to obtain a spectrogram for each audio recording. Example:  
 
-<img src="https://github.com/hernanrazo/human-voice-detection/blob/main/example.jpg" width="400" height="400"> 
+<p align="center">
+<img src="https://github.com/hernanrazo/human-voice-detection/blob/main/example.jpg" width="300" height="300"> 
+</p>
 All images are later scaled to 32x32 and transformed to tensors for training.  
 
 Both shell scripts automatically split the data into training and testing sets in a 80/20 ratio.  
