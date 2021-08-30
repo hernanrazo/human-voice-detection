@@ -8,7 +8,7 @@ from pydub import AudioSegment
 root_dir = str(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 
 
-def create_dir(dir):
+def create_dir(dir: str) -> None:
     if os.path.isdir(dir):
         print(dir, 'already exists. Continuing ...' )
     else:
@@ -16,7 +16,7 @@ def create_dir(dir):
          os.makedirs(dir)
 
  # convert .flac files to .wav files in the voice data folder
-def flac2wav():
+def flac2wav() -> None:
     flac_path = str(root_dir + '/voice_detect/data/voice/flac/')
     wav_path = str(root_dir + '/voice_detect/data/voice/wav/')
     flac_files = [f for f in os.listdir(flac_path) if os.path.isfile(os.path.join(flac_path, f)) and f.endswith('.flac')]
@@ -29,7 +29,7 @@ def flac2wav():
 
 
 # create the training and testing split lists for both classes
-def create_splits(voice_path, not_voice_path):
+def create_splits(voice_path: str, not_voice_path: str) -> list:
     voice_wavs = str(root_dir + '/voice_detect/data/voice/wav/')
     not_voice_wavs = str(root_dir + '/voice_detect/data/not_voice/wav/')
 
@@ -63,7 +63,7 @@ def create_splits(voice_path, not_voice_path):
 
 
 # calculate accuracy of a prediction
-def get_accuracy(prediction, label):
+def get_accuracy(prediction: str, label: str) -> float:
     matches  = [torch.argmax(i) == torch.argmax(j) for i, j in zip(prediction, label)]
     accuracy = matches.count(True) / len(matches)
     return accuracy

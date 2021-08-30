@@ -12,7 +12,7 @@ root_dir = str(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 
 
 # plot the mel-spectrogram for the single wav file input
-def get_melss(wav_file, new_name):
+def get_melss(wav_file: str, new_name: str) -> None:
     # get sample rate
     x, sr = librosa.load(wav_file, sr=None, res_type='kaiser_fast')
 
@@ -35,7 +35,7 @@ def get_melss(wav_file, new_name):
 
 
 # prepare the cnn dataset of images
-def prepare_dataset():
+def prepare_dataset() -> None:
     # get training and testing splits
     voice = os.path.join(root_dir, 'voice_detect/data/voice/')
     not_voice = os.path.join(root_dir, 'voice_detect/data/not_voice/')

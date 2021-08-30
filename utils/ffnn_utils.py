@@ -1,6 +1,7 @@
 import os
 import csv
 import threading
+import warnings
 import numpy as np
 import shutil
 from pydub import AudioSegment
@@ -8,12 +9,13 @@ import librosa
 import torch
 from utils.gen_utils import create_splits
 
+warnings.filterwarnings('ignore', category=UserWarning)
 root_dir = str(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 np.set_printoptions(suppress=True)
 
 
 # assign labels to wav files
-def get_label(file_path):
+def get_label(file_path: str) -> None:
     if 'not_voice' in file_path:
         return 'not_voice'
     else:
@@ -21,7 +23,7 @@ def get_label(file_path):
 
 
  # apply transforms needed to prepare data
-def apply_transforms(wav_file):
+def apply_transforms(wav_file: str) -> dict:
     
     # convert wav file to floating pont time series and get
     # default sample rate (22050)
@@ -49,7 +51,7 @@ def apply_transforms(wav_file):
 
 
 # convert transforms dictionary to a tensor
-def transforms_to_tensor(transforms):
+def transforms_to_tensor(transforms: dict) -> list:
     transforms_list = [transforms['mfccs'][0], transforms['mfccs'][1],
                        transforms['mfccs'][2], transforms['mfccs'][3],
                        transforms['mfccs'][4], transforms['mfccs'][5],
@@ -143,7 +145,7 @@ def transforms_to_tensor(transforms):
 
 
 # create one giant csv with all the tranforms data and the label of each wav file
-def get_csv(csv_name, data_split, annotations_path):
+def get_csv(csv_name: str, data_split: list, annotations_path: str) -> None:
     with open(csv_name, mode='w', newline='') as f:
         writer = csv.writer(f)
 
@@ -246,12 +248,12 @@ def get_csv(csv_name, data_split, annotations_path):
                 pass
 
     shutil.move(str(csv_name), str(root_dir + annotations_path))
-    return
+    # end function
 
 
 # prepare raw .wav files to the csv dataframe needed. This includes splitting the data into training and testing,
 # applying the transforms, and saving as a csv. This function is used in the prepare_data.sh script
-def prepare_dataset():
+def prepare_dataset() -> None:
 
     annotations_path = '/voice_detect/data/annotations'
     voice_wavs = str(root_dir + '/voice_detect/data/voice/wav/')
